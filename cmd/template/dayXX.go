@@ -17,7 +17,7 @@ func main() {
 
 	// // read from http request
 	// session := os.Getenv("AOC_SESSION")
-	// input, err := utils.ReadHTTP(2021, 1, session)
+	// input, err := utils.ReadHTTP(2024, 1, session)
 	// if err != nil {
 	// 	fmt.Println(err)
 	// 	os.Exit(0)
