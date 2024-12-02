@@ -1,5 +1,7 @@
 package utils
 
+import "strings"
+
 func removeDuplicate[T comparable](sliceList []T) []T {
 	allKeys := make(map[T]bool)
 	list := []T{}
@@ -34,4 +36,17 @@ func Reduce[T, M any](s []T, f func(M, T) M, initValue M) M {
         acc = f(acc, v)
     }
     return acc
+}
+
+func Split(input string, separator string) []string {
+	splits := strings.Split(input, separator)
+	return Filter(splits, func(split string) bool {
+		return split != ""
+	})
+}
+
+func FilterEmpty(input []string) []string {
+	return Filter(input, func(str string) bool {
+		return str != "" && str != " "
+	})
 }

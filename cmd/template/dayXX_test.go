@@ -14,13 +14,13 @@ func TestDayXX(t *testing.T) {
 		expected := 0
 		actual := part1(input)
 
-		assert.Equal(actual, expected)
+		assert.Equal(expected, actual)
 	})
 
 	t.Run("part 2", func(t *testing.T) {
 		expected := 0
 		actual := part2(input)
 
-		assert.Equal(actual, expected)
+		assert.Equal(expected, actual)
 	})
 }

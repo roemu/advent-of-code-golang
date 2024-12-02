@@ -3,10 +3,11 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
-func ReadHTTP(year, day int, session string) (string, error) {
+func ReadHTTP(year, day int, session string) string {
 	url := fmt.Sprintf("https://adventofcode.com/%d/day/%d/input", year, day)
 	session = fmt.Sprintf("session=%s", session)
 
@@ -16,15 +17,15 @@ func ReadHTTP(year, day int, session string) (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		log.Fatal("Error from in when making file request", err)
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf(string(bodyBytes))
+		log.Fatal("Error from in statuscode", resp.StatusCode)
 	}
 
-	return string(bodyBytes), nil
+	return string(bodyBytes)
 }
