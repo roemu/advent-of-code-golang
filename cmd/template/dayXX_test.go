@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aoc/internal/utils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,7 +9,7 @@ import (
 
 func TestDayXX(t *testing.T) {
 	assert := assert.New(t)
-	input := ""
+	input := utils.ReadFile("dayXX_default.txt")
 
 	t.Run("part 1", func(t *testing.T) {
 		expected := 0

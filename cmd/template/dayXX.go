@@ -8,20 +8,8 @@ import (
 )
 
 func main() {
-	// read form file
-	input, err := utils.ReadFile("resources/dayXX.txt")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(0)
-	}
-
-	// // read from http request
-	// session := os.Getenv("AOC_SESSION")
-	// input, err := utils.ReadHTTP(2024, 1, session)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	os.Exit(0)
-	// }
+	session := os.Getenv("AOC_SESSION")
+	input := utils.ReadHTTP(2024, 1, session)
 
 	fmt.Println("--- Part One ---")
 	fmt.Println("Result:", part1(input))
