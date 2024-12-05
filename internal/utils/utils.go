@@ -1,8 +1,14 @@
 package utils
 
-import "strings"
+import (
+	"slices"
+	"strconv"
+	"strings"
 
-func removeDuplicate[T comparable](sliceList []T) []T {
+	"github.com/charmbracelet/log"
+)
+
+func RemoveDuplicate[T comparable](sliceList []T) []T {
 	allKeys := make(map[T]bool)
 	list := []T{}
 	for _, item := range sliceList {
@@ -21,13 +27,42 @@ func Filter[T any](array []T, predicate func(item T) bool) (ret []T) {
 	}
 	return
 }
+func Reorder[T any](array []T, a int, b int) []T {
+	toInsert := array[a]
+	array = slices.Delete(array, a, a+1)
+	array = slices.Insert(array, b, toInsert)
+	return array
+}
+func Swap[T any](array []T, a int, b int) []T {
+	array[a], array[b] =  array[b], array[a]
+	return array
 
+}
 func Map[T, U any](ts []T, f func(T, int) U) []U {
 	us := make([]U, len(ts))
 	for i := range ts {
 		us[i] = f(ts[i], i)
 	}
 	return us
+}
+func MapToInt(ts []string) []int {
+	us := make([]int, len(ts))
+	for i := range ts {
+		num, err := strconv.Atoi(ts[i])
+		if err != nil {
+			log.Fatal("Couldn't convert string to number", "string", ts[i], "input", ts)
+		}
+		us[i] = num
+	}
+	return us
+}
+
+func Atoi(input string) int {
+	num, err := strconv.Atoi(input)
+	if err != nil {
+		log.Fatal("Couldn't convert string to number", "input", input)
+	}
+	return num
 }
 
 func Reduce[T, M any](s []T, f func(M, T) M, initValue M) M {
@@ -44,6 +79,15 @@ func Split(input string, separator string) []string {
 		return split != ""
 	})
 }
+
+func SplitLeftRight(input string, separator string) (string, string) {
+	splits := strings.Split(input, separator)
+	if len(splits) > 2 {
+		log.Warn("SplitLeftRight resulted in more than 2 results", "result", splits)
+	}
+	return splits[0], splits[1]
+}
+
 
 func FilterEmpty(input []string) []string {
 	return Filter(input, func(str string) bool {
