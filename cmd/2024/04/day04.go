@@ -111,8 +111,8 @@ func StartSearchMAS(grid [][]string) int {
 }
 
 func NewInput(input string) [][]string {
-	return utils.Map(utils.Split(input, "\n"), func(line string, _ int) []string {
-		return utils.Map([]byte(line), func(letter byte, _ int) string {
+	return utils.Map(utils.Split(input, "\n"), func(line string) []string {
+		return utils.Map([]byte(line), func(letter byte) string {
 			return string(letter)
 		})
 	})

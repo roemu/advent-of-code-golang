@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"aoc/internal/utils"
@@ -19,13 +18,7 @@ func (instruction *Instruction) Product() int {
 }
 
 func NewInstruction(input string) *Instruction {
-	val := utils.Map(strings.Split(input[4:len(input) - 1], ","), func(str string, _ int) int {
-		num, err := strconv.Atoi(str)
-		if err != nil {
-			log.Fatal("Unable to convert string to num", "string", str, "input", input)
-		}
-		return num
-	})
+	val := utils.MapAtoi(strings.Split(input[4:len(input) - 1], ","))
 	if len(val) != 2 {
 		log.Fatal("Val wasn't of length 2", "val", val, "input", input)
 	}
@@ -76,7 +69,7 @@ func main() {
 func part1(input string) int {
 	matches := FindAllMatches(input)
 
-	instructions := utils.Map(matches, func(match string, _ int) *Instruction {
+	instructions := utils.Map(matches, func(match string) *Instruction {
 		return NewInstruction(match)
 	})
 
@@ -89,7 +82,7 @@ func part1(input string) int {
 func part2(input string) int {
 	matches := FindAllMatchesConditional(input)
 
-	instructions := utils.Map(matches, func(match string, _ int) *Instruction {
+	instructions := utils.Map(matches, func(match string) *Instruction {
 		return NewInstruction(match)
 	})
 

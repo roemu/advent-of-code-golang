@@ -5,7 +5,6 @@ import (
 	"math"
 	"os"
 	"slices"
-	"strconv"
 	"strings"
 
 	"aoc/internal/utils"
@@ -21,13 +20,7 @@ type Report struct {
 func NewReport(input string) *Report {
 	return &Report{
 		Raw: input,
-		Numbers: utils.Map(utils.FilterEmpty(strings.Split(input, " ")), func(num string, _ int) int {
-			int, err := strconv.Atoi(strings.Trim(num, " 	"))
-			if err != nil {
-				log.Fatal("Unable to convert number in row", "num", num)
-			}
-			return int
-		}),
+		Numbers: utils.MapAtoi(utils.FilterEmpty(strings.Split(input, " "))),
 	}
 }
 func (report *Report) IsSafe() bool {
@@ -75,7 +68,7 @@ func NewData(input string) *Data {
 	}
 	return &Data{
 		Raw: input,
-		Reports: utils.Map(lines, func(line string, _ int) Report {
+		Reports: utils.Map(lines, func(line string) Report {
 			return *NewReport(line)
 		}),
 	}

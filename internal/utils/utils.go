@@ -40,14 +40,21 @@ func Swap[T any](array []T, a int, b int) []T {
 	return array
 
 }
-func Map[T, U any](ts []T, f func(T, int) U) []U {
+func MapI[T, U any](ts []T, f func(T, int) U) []U {
 	us := make([]U, len(ts))
 	for i := range ts {
 		us[i] = f(ts[i], i)
 	}
 	return us
 }
-func MapToInt(ts []string) []int {
+func Map[T, U any](ts []T, f func(T) U) []U {
+	us := make([]U, len(ts))
+	for i := range ts {
+		us[i] = f(ts[i])
+	}
+	return us
+}
+func MapAtoi(ts []string) []int {
 	us := make([]int, len(ts))
 	for i := range ts {
 		num, err := strconv.Atoi(ts[i])

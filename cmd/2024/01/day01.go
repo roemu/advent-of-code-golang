@@ -43,7 +43,7 @@ func part1(input string) int {
 	}, LeftRight{})
 	slices.Sort(leftright.Left)
 	slices.Sort(leftright.Right)
-	distances := utils.Map(leftright.Left, func(val int, index int) int {
+	distances := utils.MapI(leftright.Left, func(val int, index int) int {
 		return int(math.Abs(float64(val-leftright.Right[index])))
 	})
 	return utils.Reduce(distances, func(acc int, elem int) int {
@@ -64,7 +64,7 @@ func part2(input string) int {
 		acc.Right = append(acc.Right, int(right))
 		return acc
 	}, LeftRight{})
-	similarity := utils.Map(leftright.Left, func(val, index int) int {
+	similarity := utils.Map(leftright.Left, func(val int) int {
 		occurences := len(utils.Filter(leftright.Right, func(r int) bool {
 			return r == val
 		}))

@@ -52,7 +52,7 @@ func NewInput(input string) *Input {
 	updates := utils.Split(split[1], "\n")
 	return &Input{
 		Raw: input,
-		Updates: utils.Map(updates, func(line string, _ int) Update {
+		Updates: utils.Map(updates, func(line string) Update {
 			return *NewUpdate(line)
 		}),
 		AfterRules: afterRules,
@@ -125,7 +125,7 @@ func NewUpdate(input string) *Update {
 	pages := strings.Split(input, ",")
 	return &Update{
 		Raw: input,
-		Pages: utils.Map(pages, func(str string, _ int) int {
+		Pages: utils.Map(pages, func(str string) int {
 			num, err := strconv.Atoi(str)
 			if err != nil {
 				log.Fatal("Couldn't convert string to number", "string", str, "input", input)
