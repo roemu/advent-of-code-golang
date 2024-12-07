@@ -54,6 +54,17 @@ func Map[T, U any](ts []T, f func(T) U) []U {
 	}
 	return us
 }
+func MapAtoi64(ts []string) []int64 {
+	us := make([]int64, len(ts))
+	for i := range ts {
+		num, err := strconv.ParseInt(ts[i], 10, 64)
+		if err != nil {
+			log.Fatal("Couldn't convert string to number", "string", ts[i], "input", ts)
+		}
+		us[i] = num
+	}
+	return us
+}
 func MapAtoi(ts []string) []int {
 	us := make([]int, len(ts))
 	for i := range ts {
@@ -66,6 +77,13 @@ func MapAtoi(ts []string) []int {
 	return us
 }
 
+func Atoi64(input string) int64 {
+	num, err := strconv.ParseInt(input, 10, 64)
+	if err != nil {
+		log.Fatal("Couldn't convert string to number", "input", input)
+	}
+	return num
+}
 func Atoi(input string) int {
 	num, err := strconv.Atoi(input)
 	if err != nil {
@@ -116,4 +134,24 @@ func ContainsVector(input []vector.Vector, elem vector.Vector) bool {
 func RotateVector(vec vector.Vector, degrees int) vector.Vector {
 	rotated := vec.Rotate(float64(degrees) * (math.Pi / 180))
 	return vector.Vector{math.Round(rotated.X()), math.Round(rotated.Y())}
+}
+func Sum64(input []int64) int64 {
+	return Reduce(input, func(acc, num int64) int64 {
+		return acc + num
+	},0)
+}
+func Product64(input []int64) int64 {
+	return Reduce(input, func(acc, num int64) int64 {
+		return acc * num
+	},0)
+}
+func Sum(input []int) int {
+	return Reduce(input, func(acc, num int) int {
+		return acc + num
+	},0)
+}
+func Product(input []int) int {
+	return Reduce(input, func(acc, num int) int {
+		return acc * num
+	},0)
 }
