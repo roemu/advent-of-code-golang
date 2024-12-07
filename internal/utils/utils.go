@@ -1,11 +1,13 @@
 package utils
 
 import (
+	"math"
 	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/log"
+	"github.com/quartercastle/vector"
 )
 
 func RemoveDuplicate[T comparable](sliceList []T) []T {
@@ -93,4 +95,18 @@ func FilterEmpty(input []string) []string {
 	return Filter(input, func(str string) bool {
 		return str != "" && str != " "
 	})
+}
+
+func ContainsVector(input []vector.Vector, elem vector.Vector) bool {
+	for _, vec := range input {
+		if vec.Equal(elem) {
+			return true
+		}
+	}
+	return false
+}
+
+func RotateVector(vec vector.Vector, degrees int) vector.Vector {
+	rotated := vec.Rotate(float64(degrees) * (math.Pi / 180))
+	return vector.Vector{math.Round(rotated.X()), math.Round(rotated.Y())}
 }
