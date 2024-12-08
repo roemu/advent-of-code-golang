@@ -86,16 +86,10 @@ func CreateAntinodeLane(antennaA vector.Vector, antennaB vector.Vector, cityMap 
 
 	step := float64(1)
 	for {
+		// Only need to create antinodes in one direction as it's looping over
+		// all possible combinations of antennas.
+		// This will at some point come to this func with root and secondary inverted.
 		newNode := antennaA.Add(distance.Scale(step))
-		if OutOfBounds(newNode, cityMap) {
-			break;
-		}
-		antinodes = append(antinodes, newNode)
-		step++
-	}
-	step = float64(1)
-	for {
-		newNode := antennaA.Sub(distance.Scale(step))
 		if OutOfBounds(newNode, cityMap) {
 			break;
 		}
