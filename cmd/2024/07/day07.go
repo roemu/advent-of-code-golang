@@ -10,11 +10,14 @@ import (
 type Equation struct {
 	Result int64
 	Inputs []int64
+	IsPartTwo bool
 }
 
 func Calc(a, b int64, operator string) int64 {
 	if operator == "*" {
 		return a * b
+	} else if operator == "|" {
+		return int64(utils.Atoi(fmt.Sprintf("%d%d", a, b)))
 	} else {
 		return a + b
 	}
@@ -36,7 +39,11 @@ func GenerateCombinations(elements []string, length int) [][]string {
 	return combinations
 }
 func (equation *Equation) Valid() bool {
-	combinations := GenerateCombinations([]string{"*", "+"}, len(equation.Inputs) - 1)
+	operators := []string{"*", "+"}
+	if equation.IsPartTwo {
+		operators = append(operators, "|")
+	}
+	combinations := GenerateCombinations(operators, len(equation.Inputs) - 1)
 	for _, combination := range combinations {
 		sum := int64(equation.Inputs[0])
 		for i := 0; i < len(combination); i++ {
@@ -55,7 +62,6 @@ func SumValidEquations(equations []*Equation) int64 {
 		resultChannels[i] = make(chan int64)
 		go func(eq *Equation) {
 			if eq.Valid() {
-				println(eq.Result, ": valid")
 				resultChannels[i] <- eq.Result
 			} else {
 				resultChannels[i] <- 0
@@ -73,6 +79,7 @@ func NewEquation(input string) *Equation {
 	return &Equation{
 		Result: utils.Atoi64(result),
 		Inputs: utils.MapAtoi64(utils.Split(nums, " ")),
+		IsPartTwo: false,
 	}
 }
 
@@ -91,12 +98,19 @@ func main() {
 // part one
 func part1(input string) int64 {
 	equations := utils.Map(utils.Split(input, "\n"), func(line string) *Equation {
-		return NewEquation(line)
+		eq := NewEquation(line)
+		eq.IsPartTwo = false
+		return eq
 	})
 	return SumValidEquations(equations)
 }
 
 // part two
 func part2(input string) int64 {
-	return 0
+	equations := utils.Map(utils.Split(input, "\n"), func(line string) *Equation {
+		eq := NewEquation(line)
+		eq.IsPartTwo = true
+		return eq
+	})
+	return SumValidEquations(equations)
 }

@@ -1,20 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"aoc/internal/utils"
+
+	"github.com/charmbracelet/log"
 )
 
 func main() {
 	session := os.Getenv("AOC_SESSION")
 	input := utils.ReadHTTP(2024, 1, session)
 
-	fmt.Println("--- Part One ---")
-	fmt.Println("Result:", part1(input))
-	fmt.Println("--- Part Two ---")
-	fmt.Println("Result:", part2(input))
+	log.Info("--- Part One ---")
+	log.Info("", "Result", part1(input))
+	log.Info("--- Part Two ---")
+	log.Info("", "Result", part2(input))
 
 	os.Exit(0)
 }
