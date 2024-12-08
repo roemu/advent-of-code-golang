@@ -22,6 +22,7 @@ func Calc(a, b int64, operator string) int64 {
 		return a + b
 	}
 }
+// Also known as the cartesion product: https://en.wikipedia.org/wiki/Cartesian_product
 func GenerateCombinations(elements []string, length int) [][]string {
 	if length == 1 {
 		return utils.Map(elements, func(elem string) []string {

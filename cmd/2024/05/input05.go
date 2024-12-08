@@ -105,6 +105,7 @@ func (update *Update) FixOrder(input *Input) {
 	update.Pages = result
 }
 
+// Topological Sorting: https://www.geeksforgeeks.org/topological-sorting/
 func TopoSort(node int, afterMap map[int][]int, visitedMap *map[int]bool, result *[]int, allNodes []int) {
 	(*visitedMap)[node] = true
 	afters, someAfter := afterMap[node]
