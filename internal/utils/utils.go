@@ -21,6 +21,14 @@ func RemoveDuplicate[T comparable](sliceList []T) []T {
 	}
 	return list
 }
+func All[T any](array []T, predicate func(item T) bool) bool {
+	for _, s := range array {
+		if !predicate(s) {
+			return false
+		}
+	}
+	return true
+}
 func Filter[T any](array []T, predicate func(item T) bool) (ret []T) {
 	for _, s := range array {
 		if predicate(s) {
@@ -47,6 +55,18 @@ func MapI[T, U any](ts []T, f func(T, int) U) []U {
 	}
 	return us
 }
+func SwapElements[T any](arr []T, from, to, length int) []T {
+	fromElements := make([]T, length)
+	copy(fromElements, arr[from:from+length])
+	toElements := make([]T, length)
+	copy(toElements, arr[to:to+length])
+	for i := range length {
+		arr[to+i] = fromElements[i]
+		arr[from+i] = toElements[i]
+	}
+	return arr
+}
+
 func Map[T, U any](ts []T, f func(T) U) []U {
 	us := make([]U, len(ts))
 	for i := range ts {
@@ -76,6 +96,14 @@ func MapAtoi(ts []string) []int {
 	}
 	return us
 }
+func MapItoa(ts []int) []string {
+	us := make([]string, len(ts))
+	for i := range ts {
+		num := strconv.Itoa(ts[i])
+		us[i] = num
+	}
+	return us
+}
 
 func Atoi64(input string) int64 {
 	num, err := strconv.ParseInt(input, 10, 64)
@@ -91,6 +119,9 @@ func Atoi(input string) int {
 	}
 	return num
 }
+func Itoa(input int) string {
+	return strconv.Itoa(input)
+}
 
 func Reduce[T, M any](s []T, f func(M, T) M, initValue M) M {
     acc := initValue
@@ -99,12 +130,17 @@ func Reduce[T, M any](s []T, f func(M, T) M, initValue M) M {
     }
     return acc
 }
+func ReduceI[T, M any](s []T, f func(acc M, item T, index int) M, initValue M) M {
+    acc := initValue
+    for i, v := range s {
+        acc = f(acc, v, i)
+    }
+    return acc
+}
 
 func Split(input string, separator string) []string {
 	splits := strings.Split(input, separator)
-	return Filter(splits, func(split string) bool {
-		return split != ""
-	})
+	return FilterEmpty(splits)
 }
 
 func SplitLeftRight(input string, separator string) (string, string) {
@@ -118,7 +154,7 @@ func SplitLeftRight(input string, separator string) (string, string) {
 
 func FilterEmpty(input []string) []string {
 	return Filter(input, func(str string) bool {
-		return str != "" && str != " "
+		return str != "" && str != " " && len(strings.TrimSpace(str)) > 0
 	})
 }
 

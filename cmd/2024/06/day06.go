@@ -56,26 +56,22 @@ func (guard *Guard) StartPatrol(guardMap *GuardMap, startPosition vector.Vector)
 		if reachedEdge {
 			break
 		}
-		if !PositionPatroled(guardMap.PatroledPositions, patroled) &&
-			!PositionPatroled(newlyPatroledPositions, patroled) &&
-			patroled.Position != nil {
-			newlyPatroledPositions = append(newlyPatroledPositions, patroled)
-		}
+		newlyPatroledPositions = append(newlyPatroledPositions, patroled)
 	}
 	return newlyPatroledPositions
 }
 func (guard *Guard) Move(guardMap *GuardMap) (patroledPosition PatroledPosition, reachedEdge bool) {
 	nextPos := guard.Position.Add(guard.Direction)
 	if PositionOutsideOfMap(nextPos, guardMap.MapWidth, guardMap.MapHeight) {
-		// guardMap.PrintStateToFile()
 		return PatroledPosition{}, true
 	}
 	if utils.ContainsVector(guardMap.Obstacles, nextPos) {
-		guard.Direction = utils.RotateVector(guard.Direction, 90)
-		return PatroledPosition{}, false
+		rotated := utils.RotateVector(guard.Direction, 90)
+		guard.Direction = rotated
+		return PatroledPosition{Position: guard.Position, Direction: rotated}, false
 	}
 	guard.Position = guard.Position.Add(guard.Direction)
-	return PatroledPosition{Position: nextPos, Direction: guard.Direction}, false
+	return PatroledPosition{Position: guard.Position, Direction: guard.Direction}, false
 }
 
 func (guard *Guard) HasSeenPosition(position vector.Vector, direction vector.Vector) bool {
@@ -93,13 +89,8 @@ func (guard *Guard) StartLoopSearch(guardMap *GuardMap) (foundLoop bool) {
 		if reachedEdge {
 			return false
 		}
-		if patroled.Position == nil {
-			continue
-		}
 
-		if guard.HasSeenPosition(patroled.Position, guard.Direction) ||
-			PositionPatroled(guardMap.PatroledPositions,
-				PatroledPosition{Position: guard.Position, Direction: guard.Direction}) {
+		if guard.HasSeenPosition(patroled.Position, patroled.Direction) {
 			return true
 		}
 		guard.SeenPositions = append(guard.SeenPositions, patroled)
@@ -174,6 +165,14 @@ func part1(input string) int {
 	guardMap, guard := NewGuardMap(input)
 	guardMap.PatroledPositions = append(guardMap.PatroledPositions,
 		guard.StartPatrol(guardMap, guard.Position)...)
+	appeared := []vector.Vector{}
+	guardMap.PatroledPositions = utils.Filter(guardMap.PatroledPositions, func(pos PatroledPosition) bool {
+		if utils.ContainsVector(appeared, pos.Position) {
+			return false
+		}
+		appeared = append(appeared, pos.Position)
+		return true
+	})
 	return len(guardMap.PatroledPositions)
 }
 
@@ -184,26 +183,34 @@ func part2(input string) int {
 		guard.StartPatrol(guardMap, guard.Position)...)
 
 	var wg sync.WaitGroup
-	// FIXME: Doesn't count properly
 	for _, patroled := range guardMap.PatroledPositions {
 		wg.Add(1)
+		rotated := utils.RotateVector(patroled.Direction, 90)
 		funnyGuard := &Guard{
 			Position: patroled.Position,
 			// We turn him to simulate a obstacle here
-			Direction:     utils.RotateVector(patroled.Direction, 90),
-			SeenPositions: []PatroledPosition{PatroledPosition{Position: patroled.Position, Direction: patroled.Direction}},
+			Direction:     rotated,
+			SeenPositions: []PatroledPosition{
+				PatroledPosition{Position: patroled.Position, Direction: patroled.Direction},
+			},
 		}
 		customObstaclePos := patroled.Position.Clone().Add(patroled.Direction)
 		go func() {
 			defer wg.Done()
 			if funnyGuard.StartLoopSearch(guardMap) {
-				if !utils.ContainsVector(guardMap.LoopObstacles, customObstaclePos) {
-					guardMap.LoopObstacles = append(guardMap.LoopObstacles, customObstaclePos)
-				}
+				guardMap.LoopObstacles = append(guardMap.LoopObstacles, customObstaclePos)
 			}
 		}()
 
 	}
 	wg.Wait()
+	appeared := []vector.Vector{}
+	guardMap.LoopObstacles = utils.Filter(guardMap.LoopObstacles, func(pos vector.Vector) bool {
+		if utils.ContainsVector(appeared, pos) && !PositionOutsideOfMap(pos, guardMap.MapWidth, guardMap.MapHeight) {
+			return false
+		}
+		appeared = append(appeared, pos)
+		return true
+	})
 	return len(guardMap.LoopObstacles)
 }
