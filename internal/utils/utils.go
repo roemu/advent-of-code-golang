@@ -96,11 +96,7 @@ func MapAtoi64(ts []string) []int64 {
 func MapAtoi(ts []string) []int {
 	us := make([]int, len(ts))
 	for i := range ts {
-		num, err := strconv.Atoi(ts[i])
-		if err != nil {
-			log.Fatal("Couldn't convert string to number", "string", ts[i], "input", ts)
-		}
-		us[i] = num
+		us[i] = Atoi(ts[i])
 	}
 	return us
 }
@@ -114,6 +110,7 @@ func MapItoa(ts []int) []string {
 }
 
 func Atoi64(input string) int64 {
+	input = strings.TrimSpace(input)
 	num, err := strconv.ParseInt(input, 10, 64)
 	if err != nil {
 		log.Fatal("Couldn't convert string to number", "input", input)
@@ -121,11 +118,15 @@ func Atoi64(input string) int64 {
 	return num
 }
 func Atoi(input string) int {
+	input = strings.TrimSpace(input)
 	num, err := strconv.Atoi(input)
 	if err != nil {
 		log.Fatal("Couldn't convert string to number", "input", input)
 	}
 	return num
+}
+func Itoa64(input int64) string {
+	return strconv.FormatInt(input, 10)
 }
 func Itoa(input int) string {
 	return strconv.Itoa(input)
