@@ -68,84 +68,130 @@ func part1(input string) int {
 
 // part two
 func part2(input string) int {
-	disk := []string{}
+	blocks := Start(input)
+	return CalculateChecksum(blocks)
+}
+
+type Block struct {
+	Id     int
+	Length int
+}
+
+func (block *Block) String() string {
+	out := ""
+	for range block.Length {
+		if block.Id == -1 {
+			out += "."
+			continue
+		}
+		out += utils.Itoa(block.Id)
+	}
+	return out
+}
+func ReadableBlocks(blocks []Block) string {
+	out := ""
+	for _, block := range blocks {
+		out += block.String()
+	}
+	return out
+}
+
+func GenerateBlocks(input string) []Block {
+	disk := []Block{}
 	fileId := 0
 	for i, char := range utils.Split(input, "") {
+		block := &Block{
+			Id:     fileId,
+			Length: utils.Atoi(char),
+		}
 		if i == 0 || i%2 == 0 {
-			for j := 0; j < utils.Atoi(char); j++ {
-				disk = append(disk, utils.Itoa(fileId))
-			}
 			fileId++
 		} else {
-			for j := 0; j < utils.Atoi(char); j++ {
-				disk = append(disk, ".")
-			}
+			block.Id = -1
+		}
+		disk = append(disk, *block)
+	}
+	return utils.Filter(disk, func(block Block) bool {
+		return block.Length != 0
+	})
+}
+
+func CondenseBlocks(blocks []Block) []Block {
+	for i := 1; i < len(blocks); i++ {
+		if blocks[i-1].Id == -1 && blocks[i].Id == -1 {
+			blocks[i].Length += blocks[i-1].Length
+			blocks[i-1].Length = 0
 		}
 	}
-	handledFileIds := []string{}
+	return utils.Filter(blocks, func(block Block) bool {
+		return block.Length != 0
+	})
+}
+
+func Start(input string) []Block {
+	blocks := GenerateBlocks(input)
+	nextBlock := RevBlockIter()
 	for {
-		start, length, char := GetLastFileRange(disk, &handledFileIds)
-		if char == "" {
+		filePos := nextBlock(blocks)
+		if filePos < 0 {
 			break
 		}
-		dotStart, found := FindSuitableDotRange(disk, length)
-		if !found || dotStart > start {
+		emptyPos := FindFirstEmptyBlock(blocks, blocks[filePos].Length)
+		if emptyPos < 0 || emptyPos > filePos {
 			continue
 		}
-		disk = utils.SwapElements(disk, start, dotStart, length)
-	}
-	return utils.ReduceI(disk, func(acc int, char string, index int) int {
-		if char == "." {
-			return acc
+		diff := blocks[emptyPos].Length - blocks[filePos].Length
+		blocks[emptyPos].Id, blocks[filePos].Id = blocks[filePos].Id, blocks[emptyPos].Id
+		blocks[emptyPos].Length = blocks[filePos].Length
+		if diff > 0 {
+			blocks = slices.Insert(blocks, emptyPos+1, Block{
+				Id:     -1,
+				Length: diff,
+			})
 		}
-		return acc + (index * utils.Atoi(char))
-	}, 0)
 
+		blocks = CondenseBlocks(blocks)
+	}
+	return blocks
 }
 
-func GetLastFileRange(disk []string, seen *[]string) (start, length int, char string) {
-	start = -1
-	for i := len(disk) - 1; i > 0; i-- {
-		char = disk[i]
-		if slices.Contains(*seen, char) || char == "." {
+func CalculateChecksum(blocks []Block) int {
+	index := 0
+	sum := 0
+	for _, block := range blocks {
+		if block.Id == -1 {
+			index += block.Length
 			continue
 		}
-		*seen = append(*seen, char)
-		start = i
-		length = 1
-		for {
-			i--
-			if i < 0 || disk[i] != char {
-				return
-			}
-			length++
-			start = i
+		for range block.Length {
+			sum += block.Id * index
+			index++
 		}
 	}
-	char = ""
-	return
+	return sum
 }
 
-func FindSuitableDotRange(disk []string, length int) (start int, found bool) {
-	start = -1
-	found = false
-
-	count := 0
-	for i := 0; i < len(disk); i++ {
-		if disk[i] == "." {
-			count++
-		}
-		if i == len(disk)-1 || disk[i] != "." {
-			if count >= length {
-				start = i - count
-				if i == len(disk)-1 && disk[i] == "." {
-					start++
-				}
-				found = true
-				return
-			}
-			count = 0
+func FindFirstEmptyBlock(blocks []Block, minLength int) int {
+	for i, block := range blocks {
+		if block.Id == -1 && block.Length >= minLength {
+			return i
 		}
 	}
-	return
+	return -1
+}
+
+func RevBlockIter() func([]Block) int {
+	seenBlockIds := []int{}
+	return func(blocks []Block) int {
+		for i := len(blocks) - 1; i > 0; i-- {
+			if blocks[i].Id == -1 {
+				continue
+			}
+			if !slices.Contains(seenBlockIds, blocks[i].Id) {
+				seenBlockIds = append(seenBlockIds, blocks[i].Id)
+				return i
+			}
+		}
+		return -1
+	}
 }

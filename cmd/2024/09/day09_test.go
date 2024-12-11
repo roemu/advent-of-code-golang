@@ -7,6 +7,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+
+func TestStart(t *testing.T) {
+	assert := assert.New(t)
+	input := utils.ReadFile("day09_default.txt")
+	blocks := Start(input)
+
+	assert.Equal(2858, CalculateChecksum(blocks))
+
+}
 func TestDay09(t *testing.T) {
 	assert := assert.New(t)
 	input := utils.ReadFile("day09_default.txt")

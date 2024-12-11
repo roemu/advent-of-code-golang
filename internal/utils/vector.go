@@ -47,6 +47,15 @@ func (ivec *IVec2) Scale(scale int) {
 	ivec[0] *= int64(scale)
 	ivec[1] *= int64(scale)
 }
+func (ivec *IVec2) Equals(vec IVec2) bool {
+	if len(ivec) != 2 {
+		log.Fatal("IVec2.Equals(): vector did not contain 2 values, needed to compare", "actual", ivec)
+	}
+	if len(vec) != 2 {
+		log.Fatal("IVec2.Equals(): parameter did not contain 2 values, needed to compare", "actual", vec)
+	}
+	return ivec[0] == vec[0] && ivec[1] == vec[1]
+}
 
 
 
@@ -71,8 +80,8 @@ func (direction *Direction) Rotate() Direction {
 		return North
 	}
 }
-func (direction *Direction) ToIVec2() IVec2 {
-	switch *direction {
+func ToIVec2(direction Direction) IVec2 {
+	switch direction {
 	case North:
 		return IVec2{0, -1}
 	case East:

@@ -21,6 +21,14 @@ func RemoveDuplicate[T comparable](sliceList []T) []T {
 	}
 	return list
 }
+func Any[T any](array []T, predicate func(item T) bool) bool {
+	for _, s := range array {
+		if predicate(s) {
+			return true
+		}
+	}
+	return false
+}
 func All[T any](array []T, predicate func(item T) bool) bool {
 	for _, s := range array {
 		if !predicate(s) {
