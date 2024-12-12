@@ -63,6 +63,20 @@ func MapI[T, U any](ts []T, f func(T, int) U) []U {
 	}
 	return us
 }
+func FlatMap[T, U any](arr [][]T, f func([]T) []U) []U {
+	us := []U{}
+	for i := range arr {
+		us = append(us, f(arr[i])...)
+	}
+	return us
+}
+func FlatMapI[T, U any](arr [][]T, f func([]T, int) []U) []U {
+	us := []U{}
+	for i := range arr {
+		us = append(us, f(arr[i], i)...)
+	}
+	return us
+}
 func SwapElements[T any](arr []T, from, to, length int) []T {
 	fromElements := make([]T, length)
 	copy(fromElements, arr[from:from+length])

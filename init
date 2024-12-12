@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Graciously provided by our AI overlords, praise them!
+
+current_year=$(date +%Y)
+current_day=$(date +%d)
+
+if [ $1 ]; then
+	current_day=$1
+fi
+
+folder_path="./cmd/$current_year/$current_day"
+
+file_name="day${current_day}.go"
+
+file_path="$folder_path/$file_name"
+
+if [[ -f "$file_path" ]]; then
+    echo "Day already exists: $file_path"
+else
+	src_folder="./cmd/template"
+    dest_folder="./cmd/$current_year/$current_day"
+
+    mkdir -p "$dest_folder"
+
+    cp -r "$src_folder/"* "$dest_folder"
+
+    for file in "$dest_folder"/*; do
+        if [[ -f "$file" ]]; then
+            new_file_name=$(echo "$(basename "$file")" | sed "s/XX/$current_day/g")
+            mv "$file" "$dest_folder/$new_file_name"
+
+            sed -i '' "s/XX/$current_day/g" "$dest_folder/$new_file_name"
+        fi
+    done
+fi

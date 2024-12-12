@@ -10,7 +10,7 @@ import (
 
 func main() {
 	session := os.Getenv("AOC_SESSION")
-	input := utils.ReadHTTP(2024, 1, session)
+	input := utils.ReadHTTP(2024, XX, session)
 
 	log.Info("--- Part One ---")
 	log.Info("", "Result", part1(input))

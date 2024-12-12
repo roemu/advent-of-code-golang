@@ -7,6 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFlatMap(t *testing.T) {
+	assert := assert.New(t)
+	input := [][]int{[]int{1,2,3,4}, []int{5,6,7,8}}
+
+	assert.Len(utils.FlatMap(input, func(arr []int) []int {
+		return arr
+	}), 8)
+}
 func TestDay11(t *testing.T) {
 	assert := assert.New(t)
 	input := utils.ReadFile("day11_default.txt")

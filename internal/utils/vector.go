@@ -6,10 +6,42 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-
 type IVec3 [3]int64
+
+// Deprecated: Use IVec instead
 type IVec2 [2]int64
 type FVec [3]float64
+
+type IVec struct {
+	X, Y int
+}
+
+func (ivec *IVec) Add(add IVec) IVec {
+	return IVec{
+		X: ivec.X + add.X,
+		Y: ivec.Y + add.Y,
+	}
+}
+func (ivec *IVec) Sub(add IVec) IVec {
+	return IVec{
+		X: ivec.X - add.X,
+		Y: ivec.Y - add.Y,
+	}
+}
+func (ivec *IVec) Rotate(degrees int) IVec {
+	radians := float64(degrees) * math.Pi / 180
+
+	return IVec{
+		X: int(float64(ivec.X)*math.Cos(radians) - float64(ivec.Y)*math.Sin(radians)),
+		Y: int(float64(ivec.X)*math.Sin(radians) + float64(ivec.Y)*math.Cos(radians)),
+	}
+}
+func (ivec *IVec) Scale(scale int) IVec {
+	return IVec{
+		X: ivec.X * scale,
+		Y: ivec.Y * scale,
+	}
+}
 
 func (ivec *IVec2) Add(add IVec2) {
 	if len(ivec) != 2 {
@@ -37,8 +69,8 @@ func (ivec *IVec2) Rotate(degrees int) {
 	}
 	radians := float64(degrees) * math.Pi / 180
 
-	ivec[0] = int64(float64(ivec[0]) * math.Cos(radians) - float64(ivec[1]) * math.Sin(radians))
-	ivec[1] = int64(float64(ivec[0]) * math.Sin(radians) + float64(ivec[1]) * math.Cos(radians))
+	ivec[0] = int64(float64(ivec[0])*math.Cos(radians) - float64(ivec[1])*math.Sin(radians))
+	ivec[1] = int64(float64(ivec[0])*math.Sin(radians) + float64(ivec[1])*math.Cos(radians))
 }
 func (ivec *IVec2) Scale(scale int) {
 	if len(ivec) != 2 {
@@ -56,8 +88,6 @@ func (ivec *IVec2) Equals(vec IVec2) bool {
 	}
 	return ivec[0] == vec[0] && ivec[1] == vec[1]
 }
-
-
 
 type Direction int
 
@@ -78,6 +108,18 @@ func (direction *Direction) Rotate() Direction {
 		return West
 	default:
 		return North
+	}
+}
+func ToIVec(direction Direction) IVec {
+	switch direction {
+	case North:
+		return IVec{X: 0, Y: -1}
+	case East:
+		return IVec{X: 1, Y: 0}
+	case South:
+		return IVec{X: 0, Y: 1}
+	default:
+		return IVec{X: -1, Y: 0}
 	}
 }
 func ToIVec2(direction Direction) IVec2 {
