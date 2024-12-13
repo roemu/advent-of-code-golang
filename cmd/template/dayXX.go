@@ -13,9 +13,9 @@ func main() {
 	input := utils.ReadHTTP(2024, XX, session)
 
 	log.Info("--- Part One ---")
-	log.Info("", "Result", part1(input))
+	log.Infof("Result %d", part1(input))
 	log.Info("--- Part Two ---")
-	log.Info("", "Result", part2(input))
+	log.Infof("Result %d", part2(input))
 
 	os.Exit(0)
 }

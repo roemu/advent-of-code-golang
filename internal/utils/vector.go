@@ -16,6 +16,9 @@ type IVec struct {
 	X, Y int
 }
 
+func (ivec *IVec) Det(det IVec) int {
+	return ivec.X * det.Y - ivec.Y * det.X
+}
 func (ivec *IVec) Add(add IVec) IVec {
 	return IVec{
 		X: ivec.X + add.X,
@@ -98,6 +101,7 @@ const (
 	West
 )
 
+// Rotates the direction 90 degrees clockwise.
 func (direction *Direction) Rotate() Direction {
 	switch *direction {
 	case North:
