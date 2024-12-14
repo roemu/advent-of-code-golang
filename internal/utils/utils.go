@@ -214,3 +214,21 @@ func Product(input []int) int {
 		return acc * num
 	},0)
 }
+
+// A replacement for modulo, same as a % b
+// Source: https://imaginary-institute.com/resources/TechNote12/TechNote12.html
+func Wrap(a, b int) int {
+	if b > 0 {
+		if a < 0 {
+			a = b - ((-a) % b)
+		}
+	} else {
+		b = -b
+		if a < 0 {
+			a += b * (1 + int(-a/b))
+		}
+		a = b - (a % b)
+	}
+	return a % b
+}
+
