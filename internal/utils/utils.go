@@ -10,6 +10,27 @@ import (
 	"github.com/quartercastle/vector"
 )
 
+func ParseGrid(input string) (out map[IVec]string, width, height int) {
+	out = make(map[IVec]string)
+	width = 0
+	height = 0
+	for y, line := range Split(input, "\n") {
+		height++
+		width = len(line)
+		for x, char := range Split(line, "") {
+			out[IVec{X:x,Y:y}] = char
+		}	
+	}
+	return
+}
+func Find[T comparable, U comparable](search map[T]U, find U) *T {
+	for key, value := range search {
+		if value == find {
+			return &key
+		}	
+	}
+	return nil
+}
 func RemoveDuplicate[T comparable](sliceList []T) []T {
 	allKeys := make(map[T]bool)
 	list := []T{}

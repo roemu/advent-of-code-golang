@@ -6,12 +6,20 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-type IVec3 [3]int64
-
 // Deprecated: Use IVec instead
 type IVec2 [2]int64
 type FVec [3]float64
 
+type IVecD struct {
+	X, Y int
+	D IVec
+}
+func (ivecd *IVecD) ToIVec2() IVec {
+	return IVec{
+		X: ivecd.X,
+		Y: ivecd.Y,
+	}
+}
 type IVec struct {
 	X, Y int
 }
@@ -114,6 +122,10 @@ func (direction *Direction) Rotate() Direction {
 		return North
 	}
 }
+func (direction *Direction) RotateDeg(deg int) IVec {
+	dir := ToIVec(*direction)
+	return dir.Rotate(deg)
+}
 func ToIVec(direction Direction) IVec {
 	switch direction {
 	case North:
@@ -137,4 +149,30 @@ func ToIVec2(direction Direction) IVec2 {
 	default:
 		return IVec2{-1, 0}
 	}
+}
+func FromArrow(char string) Direction {
+	switch char {
+	case ">":
+		return East
+	case "<":
+		return West
+	case "v":
+		return South
+	default:
+		return North
+	}
+}
+
+func (dir *Direction) ToReadable() string {
+	switch *dir {
+	case North:
+		return "^"
+	case East:
+		return ">"
+	case South:
+		return "v"
+	case West:
+		return "<"
+	}
+	return "X"
 }
